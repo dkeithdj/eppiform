@@ -3,7 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Chaos Form</title>
+  <title>eppiForm</title>
+  <!-- PWA Meta Tags -->
+  <meta name="description" content="A chaotic form experience where every keystroke changes colors and font sizes.">
+  <meta name="theme-color" content="#000000">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png">
   <style id="theme-style">
     body {
       background-color: white;
@@ -230,6 +235,19 @@
     form.addEventListener('input', updateTheme);
     toggle.addEventListener('change', updateTheme);
     form.addEventListener('submit', handleSubmit);
+
+    // PWA Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js')
+          .then(registration => {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          })
+          .catch(error => {
+            console.log('ServiceWorker registration failed: ', error);
+          });
+      });
+    }
   </script>
 </body>
 </html>
