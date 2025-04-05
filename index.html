@@ -73,6 +73,34 @@
       height: 20px;
     }
 
+    .premium-toggle {
+      margin-bottom: 1rem;
+      padding: 0.5rem 1rem;
+      background: linear-gradient(135deg, #DA22FF 0%, #9733EE 100%);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .premium-toggle.active {
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    }
+
+    .premium-icon {
+      font-size: 1.2rem;
+    }
+
+    .premium-lock {
+      display: inline-block;
+      margin-left: 4px;
+      font-size: 0.8rem;
+    }
+
     @media (max-width: 600px) {
       h1 {
         font-size: 2rem;
@@ -93,16 +121,42 @@
     <input type="checkbox" id="rgbToggle" />
   </div>
 
+  <button id="premiumToggle" class="premium-toggle">
+    <span class="premium-icon">👑</span>
+    Premium Font Shifting
+    <span class="premium-lock" id="premiumLock">🔒</span>
+  </button>
+
   <form>
     <input type="text" placeholder="Type here..." />
     <textarea placeholder="Your thoughts, in madness..."></textarea>
     <button type="submit">Submit to the Void</button>
   </form>
 
+  <!-- Premium Feature Modal -->
+  <div id="premiumModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center;">
+    <div style="background-color: white; padding: 2rem; border-radius: 1rem; max-width: 90%; width: 400px; text-align: center;">
+      <h2 style="margin-top: 0;">🌟 Unlock Premium Features</h2>
+      <p>Upgrade to eppiForm Premium to unlock random font changing and more chaos!</p>
+      <p><strong>Only $4.99/month</strong></p>
+      <button id="fakePurchaseBtn" style="background: linear-gradient(135deg, #DA22FF 0%, #9733EE 100%); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 0.5rem; font-weight: bold; cursor: pointer; margin-right: 1rem;">Upgrade Now</button>
+      <button id="closeModalBtn" style="background-color: #f1f1f1; border: none; padding: 0.8rem 1.5rem; border-radius: 0.5rem; cursor: pointer;">Cancel</button>
+    </div>
+  </div>
+
   <script>
     const form = document.querySelector('form');
     const styleTag = document.getElementById('theme-style');
-    const toggle = document.getElementById('rgbToggle');
+    const rgbToggle = document.getElementById('rgbToggle');
+    const premiumToggle = document.getElementById('premiumToggle');
+    const premiumLock = document.getElementById('premiumLock');
+    const premiumModal = document.getElementById('premiumModal');
+    const fakePurchaseBtn = document.getElementById('fakePurchaseBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+
+    // Premium feature state
+    let isPremium = false;
+    let fontChangeEnabled = false;
 
     // Array of font families to randomly select from
     const fontFamilies = [
@@ -154,7 +208,7 @@
     }
 
     function updateTheme() {
-      const colorFunc = toggle.checked ? randomRGB : randomGray;
+      const colorFunc = rgbToggle.checked ? randomRGB : randomGray;
 
       const bg = colorFunc();
       const text = colorFunc();
@@ -170,12 +224,12 @@
       const labelFontSize = randomFontSize(12, 20);
       const buttonFontSize = randomFontSize(14, 24);
 
-      // Random font families
-      const bodyFontFamily = randomFontFamily();
-      const h1FontFamily = randomFontFamily();
-      const pFontFamily = randomFontFamily();
-      const inputFontFamily = randomFontFamily();
-      const buttonFontFamily = randomFontFamily();
+      // Random font families (only if premium is enabled)
+      const bodyFontFamily = fontChangeEnabled ? randomFontFamily() : "'Segoe UI', sans-serif";
+      const h1FontFamily = fontChangeEnabled ? randomFontFamily() : "'Segoe UI', sans-serif";
+      const pFontFamily = fontChangeEnabled ? randomFontFamily() : "'Segoe UI', sans-serif";
+      const inputFontFamily = fontChangeEnabled ? randomFontFamily() : "'Segoe UI', sans-serif";
+      const buttonFontFamily = fontChangeEnabled ? randomFontFamily() : "'Segoe UI', sans-serif";
 
       styleTag.innerHTML = `
         body {
@@ -245,6 +299,21 @@
           height: 20px;
         }
 
+        .premium-toggle {
+          margin-bottom: 1rem;
+          padding: 0.5rem 1rem;
+          background: ${isPremium ? 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' : 'linear-gradient(135deg, #DA22FF 0%, #9733EE 100%)'};
+          color: white;
+          border: none;
+          border-radius: 0.5rem;
+          font-weight: bold;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-family: ${bodyFontFamily};
+        }
+
         button {
           padding: 1rem;
           font-size: ${buttonFontSize};
@@ -274,8 +343,37 @@
       `;
     }
 
+    // Premium button click handler
+    premiumToggle.addEventListener('click', () => {
+      if (isPremium) {
+        // Toggle font changing on/off if premium
+        fontChangeEnabled = !fontChangeEnabled;
+        premiumToggle.textContent = fontChangeEnabled ?
+          '👑 Premium Font Shifting: ON' :
+          '👑 Premium Font Shifting: OFF';
+      } else {
+        // Show premium modal
+        premiumModal.style.display = 'flex';
+      }
+    });
+
+    // Fake purchase button
+    fakePurchaseBtn.addEventListener('click', () => {
+      isPremium = true;
+      fontChangeEnabled = true;
+      premiumLock.textContent = '✓';
+      premiumToggle.textContent = '👑 Premium Font Shifting: ON';
+      premiumToggle.classList.add('active');
+      premiumModal.style.display = 'none';
+    });
+
+    // Close modal button
+    closeModalBtn.addEventListener('click', () => {
+      premiumModal.style.display = 'none';
+    });
+
     form.addEventListener('input', updateTheme);
-    toggle.addEventListener('change', updateTheme);
+    rgbToggle.addEventListener('change', updateTheme);
     form.addEventListener('submit', handleSubmit);
 
     // PWA Service Worker Registration
