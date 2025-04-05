@@ -5,10 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>eppiForm</title>
   <!-- PWA Meta Tags -->
-  <meta name="description" content="A chaotic form experience where every keystroke changes colors and font sizes.">
+  <meta name="description" content="A chaotic form experience where every keystroke changes colors, font sizes, and font families.">
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+  <!-- Add Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Open+Sans&family=Lato&family=Montserrat&family=Oswald&family=Raleway&family=Ubuntu&family=Playfair+Display&family=Merriweather&family=Poppins&family=Dancing+Script&family=Pacifico&family=Shadows+Into+Light&family=Indie+Flower&family=Lobster&display=swap" rel="stylesheet">
   <style id="theme-style">
     body {
       background-color: white;
@@ -102,6 +104,30 @@
     const styleTag = document.getElementById('theme-style');
     const toggle = document.getElementById('rgbToggle');
 
+    // Array of font families to randomly select from
+    const fontFamilies = [
+      "'Roboto', sans-serif",
+      "'Open Sans', sans-serif",
+      "'Lato', sans-serif",
+      "'Montserrat', sans-serif",
+      "'Oswald', sans-serif",
+      "'Raleway', sans-serif",
+      "'Ubuntu', sans-serif",
+      "'Playfair Display', serif",
+      "'Merriweather', serif",
+      "'Poppins', sans-serif",
+      "'Dancing Script', cursive",
+      "'Pacifico', cursive",
+      "'Shadows Into Light', cursive",
+      "'Indie Flower', cursive",
+      "'Lobster', cursive",
+      "'Times New Roman', serif",
+      "'Arial', sans-serif",
+      "'Courier New', monospace",
+      "'Georgia', serif",
+      "'Verdana', sans-serif"
+    ];
+
     function randomGray() {
       const val = Math.floor(Math.random() * 256);
       return `rgb(${val}, ${val}, ${val})`;
@@ -116,6 +142,10 @@
 
     function randomFontSize(min, max) {
       return Math.floor(Math.random() * (max - min + 1) + min) + 'px';
+    }
+
+    function randomFontFamily() {
+      return fontFamilies[Math.floor(Math.random() * fontFamilies.length)];
     }
 
     function handleSubmit(event) {
@@ -140,11 +170,18 @@
       const labelFontSize = randomFontSize(12, 20);
       const buttonFontSize = randomFontSize(14, 24);
 
+      // Random font families
+      const bodyFontFamily = randomFontFamily();
+      const h1FontFamily = randomFontFamily();
+      const pFontFamily = randomFontFamily();
+      const inputFontFamily = randomFontFamily();
+      const buttonFontFamily = randomFontFamily();
+
       styleTag.innerHTML = `
         body {
           background-color: ${bg};
           color: ${text};
-          font-family: 'Segoe UI', sans-serif;
+          font-family: ${bodyFontFamily};
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -159,6 +196,7 @@
           font-size: ${h1FontSize};
           margin-bottom: 0.5rem;
           text-align: center;
+          font-family: ${h1FontFamily};
         }
 
         p {
@@ -166,6 +204,7 @@
           font-style: italic;
           opacity: 0.8;
           font-size: ${pFontSize};
+          font-family: ${pFontFamily};
         }
 
         form {
@@ -184,6 +223,7 @@
           background-color: ${inputBg};
           color: ${inputText};
           transition: all 0s ease;
+          font-family: ${inputFontFamily};
         }
 
         textarea {
@@ -197,6 +237,7 @@
           gap: 0.5rem;
           margin-bottom: 1rem;
           font-size: ${labelFontSize};
+          font-family: ${bodyFontFamily};
         }
 
         .toggle-container input[type="checkbox"] {
@@ -213,6 +254,7 @@
           color: white;
           cursor: pointer;
           transition: all 0.2s ease;
+          font-family: ${buttonFontFamily};
         }
 
         button:hover {
